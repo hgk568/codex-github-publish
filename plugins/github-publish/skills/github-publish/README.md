@@ -77,3 +77,15 @@ node scripts\secret-scan.mjs .
 ## License
 
 MIT
+
+## Create an empty repository
+
+Create a private, completely empty repository for the authenticated GitHub
+user:
+
+```sh
+node scripts/create-repo.mjs test2
+```
+
+Use `--public` for a public repository or `--description="..."` to set its
+description.

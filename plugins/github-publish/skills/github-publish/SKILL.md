@@ -11,6 +11,7 @@ Publish local files or directories to a GitHub repository without ever leaking A
 
 - The user asks to push / upload / commit files to GitHub.
 - The user asks to create a new GitHub repo and fill it with content.
+- The user asks to create a new empty GitHub repo.
 - The user wants a folder published under a specific path in a repo.
 
 ## How to use
@@ -25,6 +26,16 @@ node scripts/secret-scan.mjs .
 node scripts/publish.mjs owner/repo ./some-file.txt ./some-dir --message "add feature"
 ```
 
+To create an empty repository without uploading files:
+
+```sh
+node scripts/create-repo.mjs test2
+```
+
+The empty-repository command creates a private repository by default, with no
+README, license, `.gitignore`, or initial commit. Use `--public` only when the
+user explicitly asks for a public repository.
+
 Useful flags (see `node scripts/publish.mjs --help`):
 
 - `--create` — create the repository if it does not exist (**private** by default; add `--public` to make it public).
@@ -36,7 +47,7 @@ Useful flags (see `node scripts/publish.mjs --help`):
 ## Rules (follow these strictly)
 
 1. **Never put a token or key into any file you commit.** Tokens come from:
-   `GITHUB_TOKEN` env → `~/.dsh/repo-tools.credentials.json` → git credential manager.
+   `GITHUB_TOKEN` env → `~/.dsh/repo-tools.credentials.json` → Git Credential Manager.
    The scripts handle this automatically — do not inline credentials.
 2. **Secret files block the upload.** If a scan finds `.env`, `*.key`, `*.pem`,
    `credentials.json`, `id_rsa`, inline `password=`/`api_key=` assignments etc.,

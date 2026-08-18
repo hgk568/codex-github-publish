@@ -1,7 +1,7 @@
 {
   "name": "github-publish",
   "description": "Publish local files to GitHub with secret scanning and safe credential handling.",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "author": {
     "name": "Local"
   },

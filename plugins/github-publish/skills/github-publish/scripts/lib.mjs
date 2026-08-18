@@ -136,7 +136,8 @@ export function gitTry(cwd, args) {
   try {
     return { ok: true, out: git(cwd, args) }
   } catch (error) {
-    const raw = error?.stderr ?? error?.message ?? String(error)
+    const details = [error?.stdout, error?.stderr].filter(Boolean).join('\n').trim()
+    const raw = details || error?.message || String(error)
     return { ok: false, out: String(raw).trim() }
   }
 }
@@ -151,6 +152,8 @@ export function resolveToken() {
     const data = JSON.parse(readFileSync(file, 'utf8').replace(/^\uFEFF/, ''))
     if (data?.github?.token) return String(data.github.token)
   } catch { /* ignore */ }
+  const gcm = gcmCredentials()
+  if (gcm?.password) return gcm.password
   return null
 }
 
@@ -200,8 +203,11 @@ export async function apiCreateRepo({ name, description, isPrivate }, token) {
   return { url: body.html_url, fullName: body.full_name }
 }
 
-export function repoExists(repo) {
-  return gitTry(process.cwd(), ['-c', 'http.sslBackend=openssl', 'ls-remote', `https://github.com/${repo}.git`, 'HEAD']).ok
+export function repoExists(repo, token = null) {
+  const remote = token
+    ? `https://x-access-token:${encodeURIComponent(token)}@github.com/${repo}.git`
+    : `https://github.com/${repo}.git`
+  return gitTry(process.cwd(), ['-c', 'http.sslBackend=openssl', 'ls-remote', remote, 'HEAD']).ok
 }
 
 export { tmpdir, homedir }

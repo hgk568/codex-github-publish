@@ -140,7 +140,7 @@ async function main() {
   }
 
   const token = resolveToken()
-  const gcm = gcmCredentials()
+  const gcm = token ? null : gcmCredentials()
 
   // 1) secret scan — block or exclude
   const hits = scanPaths(items.map((i) => i.abs), cwd)
@@ -151,7 +151,7 @@ async function main() {
   const excluded = new Set(hits.map((h) => h.file))
 
   // 2) ensure the repository exists
-  if (!repoExists(repo)) {
+  if (!repoExists(repo, token)) {
     if (!opts.create) {
       console.error(`repo ${repo} not found — pass --create to create it (private by default)`)
       process.exit(1)
@@ -171,8 +171,11 @@ async function main() {
   // 3) temp clone → copy → commit → push
   const tmp = mkdtempSync(join(tmpdir(), 'github-publish-'))
   try {
-    const cloned = gitTry(tmp, ['-c', 'http.sslBackend=openssl', 'clone', `https://github.com/${repo}.git`, 'work'])
-    if (!cloned.ok) { console.error(`clone failed: ${cloned.out}`); process.exit(1) }
+    const remote = token
+      ? `https://x-access-token:${encodeURIComponent(token)}@github.com/${repo}.git`
+      : `https://github.com/${repo}.git`
+    const cloned = gitTry(tmp, ['-c', 'http.sslBackend=openssl', 'clone', remote, 'work'])
+    if (!cloned.ok) { console.error(`clone failed: ${maskToken(cloned.out, token)}`); process.exit(1) }
     const work = join(tmp, 'work')
     ensureBranch(work, opts.branch)
 
@@ -183,6 +186,9 @@ async function main() {
     const status = gitTry(work, ['status', '--porcelain'])
     if (!status.ok) { console.error(`git status failed: ${status.out}`); process.exit(1) }
     if (!status.out.trim()) { console.log(`nothing to commit — files unchanged in ${repo}`); process.exit(0) }
+
+    const staged = gitTry(work, ['add', '--all'])
+    if (!staged.ok) { console.error(`git add failed: ${staged.out}`); process.exit(1) }
 
     const user = opts.authorName || gcm?.username || 'github-publish'
     const email = opts.authorEmail || `${user}@users.noreply.github.com`
