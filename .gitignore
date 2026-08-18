@@ -1,0 +1,28 @@
+# ── 密钥与凭据：绝不提交 ─────────────────────────────
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.p8
+id_rsa
+id_ed25519
+*.jks
+*.keystore
+credentials.json
+client_secret*.json
+service-account*.json
+*.secret
+.npmrc
+.pypirc
+.netrc
+.git-credentials
+
+# ── 其他 ────────────────────────────────────────────
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
