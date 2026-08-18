@@ -1,0 +1,18 @@
+{
+  "name": "github-publish",
+  "description": "Publish local files to GitHub with secret scanning and safe credential handling.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Local"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "GitHub Publish",
+    "shortDescription": "Publish local files to GitHub safely.",
+    "longDescription": "Publishes files to GitHub after scanning for credentials and uses locally stored authentication.",
+    "developerName": "Local",
+    "category": "Productivity",
+    "capabilities": ["Write"],
+    "defaultPrompt": "Publish this folder to a private GitHub repository."
+  }
+}
