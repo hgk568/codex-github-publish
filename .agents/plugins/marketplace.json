@@ -1,0 +1,20 @@
+﻿{
+  "name": "codex-github-publish",
+  "interface": {
+    "displayName": "GitHub Publish"
+  },
+  "plugins": [
+    {
+      "name": "github-publish",
+      "source": {
+        "source": "local",
+        "path": "./plugins/github-publish"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
